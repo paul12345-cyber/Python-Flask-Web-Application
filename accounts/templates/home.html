@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block body %}
+
+<h1>{{ user.first_name + 's' }} TODO List</h1>
+
+<!-- Displaying notes stored in database-->
+<ul class="list-group list-group-flush" id="notes">
+     {% for note in user.notes %}       <!-- tis part of code could have been implemented from the view.py controller and results data passed as a parameter-->
+        <li class="list-group-item"> {{ note.message }}
+            <button type="button" class= "close" onClick="deleteNote({{ note.id }})">  <!-- DeleteNote is a javascript function-->
+               <span aria-hidden="true">&times;</span>   <!-- &times; is equivalent to x-->
+            </button>
+         </li>
+     {% endfor %}
+     
+</ul>
+
+<form method="POST">
+    <textarea name="note" id="note" class="form-control"></textarea>
+    <div align="center">  
+    <br/>
+    <button type="submit" class="btn btn-primary">Post ToDo</button>
+    </div>
+</form>
+
+{% endblock %}
