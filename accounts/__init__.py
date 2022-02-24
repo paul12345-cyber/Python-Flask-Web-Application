@@ -6,7 +6,6 @@ from flask_mail import Mail, Message
 
 db = SQLAlchemy()   # instance to sqlalchamy ORM...db needs to be further initialized
 mail = Mail()   # mail instance...mail needs to be further initialized
-DB_NAME="database.db"
 
 app=Flask(__name__)
 
@@ -15,21 +14,22 @@ def create_app():
     
     app.config['SECRET_KEY']='thisismykey'  # for enceypting/siging session cookies
 
-  #NOTE: WE NEEDED db or the app to be TO BE CREATED (initiated) BEFORE IMPORTING BLUEPRINTS      
-    app.config['SQLALCHEMY_DATABASE_URI']= f'sqlite:///{DB_NAME}'
+    #NOTE: WE NEEDED db or the app to be TO BE CREATED (initiated) BEFORE IMPORTING BLUEPRINTS     
+    # go to the mysql databaseserver, login as root with password and create the database.
+    app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://username:password@server_IP/TODO_db'  
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS_URI']= False
     #Email related Configuration values
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = 'gmail address here'
+    app.config['MAIL_USERNAME'] = 'email address here'
     app.config['MAIL_PASSWORD'] = 'gmail password here'   # to be removed
-    app.config['MAIL_DEFAULT_SENDER'] = 'gmail address here'
+    app.config['MAIL_DEFAULT_SENDER'] = 'email address here'
     mail.init_app(app)
     db.init_app(app)
 
-    
+
     from .views import views_bp
     from .auth import auth_bp
     
@@ -40,9 +40,9 @@ def create_app():
 
 
     from .models import User, Note     # NOTE: The User and Note import should come before create_all function
-    if not path.exists('accounts/' + DB_NAME):   # check whether database exists or not
-        db.create_all(app=app)   # creates database and tables (imported from .models)
-        print('Created Database')
+  
+    db.create_all(app=app) # In case user table doesn't exists already. Else remove it. 
+                           # create_all creates tables in the existing database(imported from .models)
     
     
     login_manager=LoginManager()  #object instance 
